@@ -75,14 +75,13 @@ class Graph:
         print('With M = {} | L1 Distance = {}'.format(steps, L1_distance))
         return L1_distance
 
-    def calculate_PageRank_PowerIteration(self, max_iterations = 10 ** 20, alpha = 0.15, eps = 10**(-9)):
-        
+    def calculate_PageRank_PowerIteration(self, max_iterations = 10 ** 20, alpha = 0.15, eps = 10**(-9)): 
         # initialize PageRank vector pi^0 as {1/n}
         x = {}
         for key, node in self.structure.items():
             node.pageRank = 1/self.getSize()
             x[key] = 1/self.getSize()
-
+            
         i = 0
         while i <= max_iterations:
             i += 1
