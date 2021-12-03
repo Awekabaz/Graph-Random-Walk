@@ -22,6 +22,7 @@ def relationship(nodes, M):
 if __name__ == '__main__':
     fileName = 'data/com-dblp.txt'
 
+
     sub = 'non_stopping_nodes' # Monte Carlo for stoping
     
     graph = Graph()
