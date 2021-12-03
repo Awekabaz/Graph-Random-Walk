@@ -81,7 +81,7 @@ class Graph:
         for key, node in self.structure.items():
             node.pageRank = 1/self.getSize()
             x[key] = 1/self.getSize()
-            
+
         i = 0
         while i <= max_iterations:
             i += 1
@@ -127,7 +127,6 @@ class Graph:
 
     def getPageRank(self):
         returnList = {}
-
         for key, node in self.structure.items():
             returnList[key] = node.pageRank
 
