@@ -1,85 +1,43 @@
 import random
 import matplotlib.pyplot as plt
+import seaborn as sns
 from node import Node 
 
-class Graph:
-    
-    def __init__(self):
-        # defines structure of the graph
-        # nodeNum: Node -> {1: Node1, 2: Node2, ...}
-        self.structure = {} 
+### Utils ###
+from utils.metrics import l1_distance
+from graph import Graph
 
-    def construct(self, fileName):
-        # we assume the graph is undirected
-        # read the graph from file: node - its neighbor
-        f = open(fileName, 'r')
-
-        # construct graph -> parse the file and append the neighbors
-        i = 0
-        for line in f:
-            if( i < 4):
-                i+=1
-                continue
-            
-            try:
-                u, v = map(int,line.split())
-            except:
-                print('Parsing Error')
-
-            if u not in self.structure:
-                self.structure[u] = Node()
-
-            if v not in self.structure:
-                self.structure[v] = Node()
-
-            self.structure[v].neighbors.append(u)
-            self.structure[u].neighbors.append(v)
-
-    def calculateDegrees(self):
-        sum_degrees = 0 # the sum of the degrees of all nodes
-
-        # calculate degree of each node and find sum of the degrees
-        for node in self.structure.keys():
-            self.structure[node].calculateDegree()
-            sum_degrees += self.structure[node].degree
-
-        # calculate normalized degree of each node
-        for node in self.structure.keys():
-            self.structure[node].calculateDegreeNorm(sum_degrees)
-
-    def randomWalk(self, steps):
-        L1_distance = 0
-        currentPoint = random.choice(list(self.structure.keys())) # randomly choose a starting point
-    
-        for step in range(steps):
-            # list of all node's neigbors
-            variants = self.structure[currentPoint].neighbors
-
-            if len(variants) == 0: continue # skip if no neighbors
-
-            currentPoint = random.choice(variants) # next step
-            self.structure[currentPoint].m_v += 1 # increment the number of visits for chosen node
-
-        for node in self.structure.keys():
-            # calculate empirical frequency vector and L1 distance as metrics
-            self.structure[node].f_v =  self.structure[node].m_v / steps
-            L1_distance += abs(self.structure[node].degreeNorm - self.structure[node].f_v)
-
-        L1_distance = round(L1_distance, 3)
-        print('With M = {} | L1 Distance = {}'.format(steps, L1_distance))
-        return L1_distance
+def relationship(nodes, M):
+    degreeNormList = []
+    freqList = []
+    for node in nodes:
+        degreeNormList.append(node.degreeNorm)
+        freqList.append(node.f_v)
+    plt.title('{} steps'.format(M))
+    plt.xlabel('n')
+    plt.ylabel('f')
+    plt.scatter(degreeNormList, freqList)
+    plt.show()
 
 if __name__ == '__main__':
-    fileName = 'com-dblp.txt'
+    fileName = 'data/com-dblp.txt'
+
+    sub = 'non_stopping_nodes' # Monte Carlo for stoping
+    
+    graph = Graph()
+    graph.construct(fileName)
+    graph.calculate_PageRank_PowerIteration()
+    ground_truth = graph.getPageRank() # ground truth vector
 
     result = []
-    baseStep = 10**7
-    M = [baseStep, 2*baseStep, 3*baseStep, 4*baseStep, 5*baseStep]
-    for steps in M:
-        graph = Graph()
-        graph.construct(fileName)
-        graph.calculateDegrees()
-        result.append(graph.randomWalk(steps))
-
-    plt.plot(M, result)
+    for i in [2,4,6,8,10]:
+        PageRank_vector = graph.random_walk(i*graph.getSize(), sub)
+        diff = l1(ground_truth, PageRank_vector)
+        print('For M = {}*n, difference = {}'.format(i, diff))
+        result.append(diff)
+    
+    plt.figure();
+    plt.xlabel('M')
+    plt.ylabel('Difference')
+    sns.lineplot(x = [2,4,6,8,10], y = result);
     plt.show()
