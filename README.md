@@ -2,9 +2,9 @@
 
 Here I implemented several methods on an undirected graph graph:
 
-Simulated a random walk and calculated the L1 distance between the normalized degree vector and  the empirical frequency vector; 
+- Simulated a random walk and calculated the L1 distance between the normalized degree vector and  the empirical frequency vector; 
 
-Calculated the PageRank of the graph (PowerIteration and Monte Carlo methods);
+- Calculated the PageRank of the graph (PowerIteration and Monte Carlo methods);
 
 ![condition](/ph/cond.png)
 
