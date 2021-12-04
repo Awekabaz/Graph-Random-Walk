@@ -32,7 +32,7 @@ if __name__ == '__main__':
 
     result = []
     for i in [2,4,6,8,10]:
-        PageRank_vector = graph.random_walk(i*graph.getSize(), sub)
+        PageRank_vector = graph.calculate_PageRank_RandomWalk(i*graph.getSize(), sub)
         diff = l1_distance(ground_truth, PageRank_vector)
         print('For M = {}*n, difference = {}'.format(i, diff))
         result.append(diff)
